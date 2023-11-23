@@ -1,2 +1,2 @@
-# benzin-bank-js-project
-Training in js. tutor: HtmlLessons 
+# Benzin bank
+Training in Vanilla js. tutor: HtmlLessons 
