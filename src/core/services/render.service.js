@@ -1,0 +1,95 @@
+import { Home } from '@/components/screens/home/home.component'
+import { ChildComponent } from '../component/child.component'
+
+class RenderService {
+	constructor() {
+		this.home = new Home().render()
+	}
+
+	/**
+	 * @param {string} html
+	 * @param {Array} components
+	 * @param {Object} [styles]
+	 * @returns {HTMLElement}
+	 */
+	htmlToElement(html, components = [], styles) {
+		const template = document.createElement('template')
+		template.innerHTML = html.trim()
+
+		const element = template.content.firstChild
+
+		// styles
+		if (styles) {
+			this.#applyModuleStyles(styles, element)
+		}
+
+		this.#replaceComponentTags(element, components)
+
+		return element
+	}
+
+	/**
+	 * @param {HTMLElement} element
+	 * @param {Array} components
+	 */
+	#replaceComponentTags(parentsElement, components) {
+		const componentTagPattern = /^component-/
+		const allElements = parentsElement.getElementByTagName('*')
+
+		for (const element of allElements) {
+			const elementTagName = element.tagName.toLowerCase()
+
+			if (componentTagPattern.test(elementTagName)) {
+				const componentName = elementTagName
+					.replace(componentTagPattern, '')
+					.replace(/-/g, '')
+
+				const foundComponent = components.find((Component) => {
+					const instance =
+						Component instanceof ChildComponent ? Component : new Component()
+
+					return instance.constructor.name.toLowerCase() === componentName
+				})
+
+				if (foundComponent) {
+					const componentContent =
+						foundComponent instanceof ChildComponent
+							? foundComponent.render()
+							: new foundComponent().render()
+					element.replaceWith(componentContent)
+				} else {
+					console.error(
+						`Component ${componentName} not found in the provided components array.`
+					)
+				}
+			}
+		}
+	}
+
+	/**
+	 * @param {Object} moduleStyles
+	 * @param {string} selector
+	 * @returns {void}
+	 */
+	#applyModuleStyles(moduleStyles, element) {
+		if (!element) return
+
+		const applyStyles = (element) => {
+			for (const [key, value] of Object.entries(moduleStyles)) {
+				if (element.classList.contains(key)) {
+					element.classList.remove(key)
+					element.classList.add(value)
+				}
+			}
+		}
+
+		if (element.getAttribute('class')) {
+			applyStyles(element)
+		}
+
+		const elements = element.querySelectorAll('*')
+		elements.forEach(applyStyles)
+	}
+}
+
+export default new RenderService()
