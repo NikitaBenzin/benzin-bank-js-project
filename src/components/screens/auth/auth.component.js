@@ -1,4 +1,4 @@
-import { BaseScreen } from '../../../core/component/base-screen'
+import { BaseScreen } from '@/core/component/base-screen.component'
 
 export class Auth extends BaseScreen {
 	constructor() {
@@ -6,6 +6,6 @@ export class Auth extends BaseScreen {
 	}
 
 	render() {
-		return '<h1>Auth</h1>'
+		return '<p>Auth</p>'
 	}
 }

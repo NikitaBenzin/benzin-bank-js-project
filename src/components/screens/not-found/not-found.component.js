@@ -1,5 +1,10 @@
-export class NotFound {
+import { BaseScreen } from '@/core/component/base-screen.component'
+
+export class NotFound extends BaseScreen {
+	constructor() {
+		super({ title: 'Not Found' })
+	}
 	render() {
-		return '<h1>Not found</h1>'
+		return '<p>Not found!</p>'
 	}
 }

@@ -1,11 +1,6 @@
-import { Home } from '@/components/screens/home/home.component'
-import { ChildComponent } from '../component/child.component'
+import ChildComponent from '../component/child.component'
 
 class RenderService {
-	constructor() {
-		this.home = new Home().render()
-	}
-
 	/**
 	 * @param {string} html
 	 * @param {Array} components
@@ -18,7 +13,6 @@ class RenderService {
 
 		const element = template.content.firstChild
 
-		// styles
 		if (styles) {
 			this.#applyModuleStyles(styles, element)
 		}
@@ -29,22 +23,21 @@ class RenderService {
 	}
 
 	/**
-	 * @param {HTMLElement} element
+	 * @param {HTMLElement} parentElement
 	 * @param {Array} components
 	 */
-	#replaceComponentTags(parentsElement, components) {
+	#replaceComponentTags(parentElement, components) {
 		const componentTagPattern = /^component-/
-		const allElements = parentsElement.getElementByTagName('*')
+		const allElements = parentElement.getElementsByTagName('*')
 
 		for (const element of allElements) {
 			const elementTagName = element.tagName.toLowerCase()
-
 			if (componentTagPattern.test(elementTagName)) {
 				const componentName = elementTagName
 					.replace(componentTagPattern, '')
 					.replace(/-/g, '')
 
-				const foundComponent = components.find((Component) => {
+				const foundComponent = components.find(Component => {
 					const instance =
 						Component instanceof ChildComponent ? Component : new Component()
 
@@ -59,7 +52,7 @@ class RenderService {
 					element.replaceWith(componentContent)
 				} else {
 					console.error(
-						`Component ${componentName} not found in the provided components array.`
+						`Component "${componentName}" not found in the provided components array.`
 					)
 				}
 			}
@@ -68,13 +61,13 @@ class RenderService {
 
 	/**
 	 * @param {Object} moduleStyles
-	 * @param {string} selector
+	 * @param {string} element
 	 * @returns {void}
 	 */
 	#applyModuleStyles(moduleStyles, element) {
 		if (!element) return
 
-		const applyStyles = (element) => {
+		const applyStyles = element => {
 			for (const [key, value] of Object.entries(moduleStyles)) {
 				if (element.classList.contains(key)) {
 					element.classList.remove(key)
@@ -93,3 +86,12 @@ class RenderService {
 }
 
 export default new RenderService()
+
+{
+	/* <div class='home'>
+	<h1 class='text'></h1>
+	<component-heading></component-heading>
+	<component-card-info></component-card-info>
+</div>
+ */
+}
